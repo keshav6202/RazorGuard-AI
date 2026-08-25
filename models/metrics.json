@@ -1,23 +1,27 @@
 {
+  "train_rows": 12000,
+  "validation_rows": 4000,
   "test_rows": 4000,
-  "threshold": 0.4,
-  "precision": 0.8027522935779816,
+  "split": "60/20/20 stratified train/validation/test",
+  "threshold": 0.4099999999999999,
+  "threshold_selection": "maximum validation F1; recall used as tie-breaker",
+  "precision": 0.8177570093457944,
   "recall": 0.875,
-  "f1": 0.8373205741626795,
-  "roc_auc": 0.9944855263157895,
+  "f1": 0.8454106280193237,
+  "roc_auc": 0.994146052631579,
   "confusion_matrix": [
     [
-      3757,
-      43
+      3761,
+      39
     ],
     [
       25,
       175
     ]
   ],
-  "false_positive_count": 43,
+  "false_positive_count": 39,
   "false_negative_count": 25,
   "false_positive_cost_per_case": 150.0,
   "false_negative_cost_per_case": 1000.0,
-  "estimated_test_loss": 31450.0
+  "estimated_test_loss": 30850.0
 }

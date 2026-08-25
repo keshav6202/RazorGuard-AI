@@ -51,7 +51,12 @@ m1.metric("Precision", f"{metrics.get('precision',0):.2%}")
 m2.metric("Recall", f"{metrics.get('recall',0):.2%}")
 m3.metric("F1 Score", f"{metrics.get('f1',0):.2%}")
 m4.metric("ROC-AUC", f"{metrics.get('roc_auc',0):.2%}")
-st.caption("Held-out prototype benchmark • 4,000 synthetic test transactions • Not production fraud performance")
+st.caption(
+    f"Held-out prototype benchmark • "
+    f"{metrics.get('test_rows', 0):,} synthetic test transactions • "
+    f"Threshold selected on validation data • "
+    f"Not production fraud performance"
+)
 
 tab1, tab2, tab3 = st.tabs(["🔎 Transaction Investigator", "📊 Risk Analytics", "🧠 Methodology"])
 
@@ -147,10 +152,41 @@ with tab2:
         show["spike_flag"] = show["spike_flag"].map(lambda v:"🚨 YES" if v else "No")
         st.dataframe(show, hide_index=True, width="stretch")
         st.markdown("### Held-out evaluation")
+        ev = pd.DataFrame({
+            "Metric": ["Precision", "Recall", "F1", "ROC-AUC"],
+            "Score": [
+                metrics.get("precision", 0),
+                metrics.get("recall", 0),
+                metrics.get("f1", 0),
+                metrics.get("roc_auc", 0)
+            ]
+        })
+        ev["Score"] = ev["Score"].map(lambda v: f"{v:.2%}")
+        st.dataframe(ev, hide_index=True, width="stretch")
+
+        st.caption(
+            f"False positives: {metrics.get('false_positive_count', '—')} • "
+            f"False negatives: {metrics.get('false_negative_count', '—')} • "
+            f"Estimated benchmark loss: ₹{metrics.get('estimated_test_loss', 0):,.0f}"
+        )
+
+        st.caption(
+            f"Evaluation: {metrics.get('split', 'stratified train/validation/test split')} • "
+            f"Threshold: {metrics.get('threshold', 0):.2f} • "
+            f"{metrics.get('threshold_selection', 'validation-based threshold selection')}"
+        )
         ev = pd.DataFrame({"Metric":["Precision","Recall","F1","ROC-AUC"],"Score":[metrics.get("precision",0),metrics.get("recall",0),metrics.get("f1",0),metrics.get("roc_auc",0)]})
         ev["Score"] = ev["Score"].map(lambda v:f"{v:.2%}")
         st.dataframe(ev, hide_index=True, width="stretch")
-        st.caption(f"False positives: {metrics.get('false_positive_count','—')} • False negatives: {metrics.get('false_negative_count','—')} • Estimated benchmark loss: ₹{metrics.get('estimated_test_loss',0):,.0f}")
+        st.caption(f"False positives: {metrics.get('false_positive_count', '—')} • "
+                f"False negatives: {metrics.get('false_negative_count', '—')} • "
+                f"Estimated benchmark loss: ₹{metrics.get('estimated_test_loss', 0):,.0f}"
+)
+
+        st.caption(f"Evaluation: {metrics.get('split', 'stratified train/validation/test split')} • "
+                    f"Threshold: {metrics.get('threshold', 0):.2f} • "
+                    f"{metrics.get('threshold_selection', 'validation-based threshold selection')}"
+)
 
 with tab3:
     st.subheader("System design")
